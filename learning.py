@@ -18,11 +18,33 @@ class BigBrain:
         # every time a new instance of BigBrain is initiated, increment total by 1
         BigBrain.num_bigbrains += 1
 
+    # by defining fullname as a method with the property decorator, it allows us to access fullname as a property
+    @property
     def fullname(self):
         return '{} {}'.format(self.first, self.last)
 
+    # a setter for the fullname property
+    @fullname.setter
+    def fullname(self, name):
+        # this splits the name into first and last name on the space
+        first, last = name.split(' ')
+        self.first = first
+        self.last = last
+
+    # a deleter for the fullname property
+    @fullname.deleter
+    def fullname(self):
+        print('Delete Name')
+        self.first = None
+        self.last = None
+
     def raise_iq(self):
         self.iq = int(self.iq * self.iq_growth)
+
+    # by defining email as a method with the property decorator, it allows us to access email as a property
+    @property
+    def email(self):
+        return '{}.{}@email.com'.format(self.first, self.last)
 
     @classmethod
     def set_iq_growth(cls, amount):
@@ -39,6 +61,22 @@ class BigBrain:
             return True
         return False
 
+    def __repr__(self):
+        return "BigBrain('{}', '{}', {})".format(self.first, self.last, self.iq)
+
+    def __str__(self):
+        return '{} - {}'.format(self.fullname, self.iq)
+
+    # combining (adding) the iq of self and another BigBrain
+    # the __add__ function allows us to use
+    # print(bb_1 + bb_2)
+    def __add__(self, other):
+        return self.iq + other.iq
+
+    # returns the length of fullname
+    def __len__(self):
+        return len(self.fullname())
+
 
 bb_1 = BigBrain('dhruv', 'ppap', 9001)
 bb_2 = BigBrain('jim', 'bob', 9001)
@@ -48,7 +86,11 @@ bb_str_2 = 'jimbob2-bob-9001'
 bb_str_3 = 'jimbob3-bob-9001'
 
 new_bb_1 = BigBrain.from_string(bb_str_1)
-print(new_bb_1.first)
+bb_2.first = 'slim'
+print(bb_2.email)
+bb_2.fullname = "slim bob"
+print(bb_2.fullname)
+
 
 """
 The two following lines of code will print the same result.
@@ -66,8 +108,9 @@ print(bb_2.iq_growth)
 my_date = datetime.date(2019, 8, 13)
 print(BigBrain.is_weekend(my_date))
 
-
 # student is a subclass of BigBrain, and it inherits from this class
+
+
 class Student(BigBrain):
 
     # by changing the growth rate of a subclass, it doesn't change anything in parent class
@@ -110,7 +153,7 @@ class Instructor(BigBrain):
     # method to print out all students under this instructor
     def print_student_list(self):
         for stud in self.students:
-            print('-->', stud.fullname())
+            print('-->', stud.fullname)
 
 
 student1 = Student('dhruv', 'ppap', 9001, 4.3)
@@ -120,7 +163,7 @@ instructor1 = Instructor('little', 'benjamin', 9001, [student1])
 
 print(student1.first)
 print(student2.first)
-print(instructor1.fullname())
+print(instructor1.fullname)
 
 instructor1.add_stud(student2)
 instructor1.print_student_list()
@@ -128,9 +171,9 @@ instructor1.print_student_list()
 # help function shows method resolution order, where python searches for attributes and methos
 # print(help(Student))
 
-""" 
+"""
 isinstance() tells us if object is isntance of a class
-for example, the following would return true true false: 
+for example, the following would return true true false:
 isinstance(instructor1, Instructor)
 isinstance(instructor1, BigBrain)
 isinstance(instructor1, Student)
@@ -156,3 +199,17 @@ BigBrain is not a subclass of Instructor
 print(issubclass(Instructor, BigBrain))
 print(issubclass(Student, BigBrain))
 print(issubclass(BigBrain, Instructor))
+
+"""
+What is the difference between repr() and str()?
+
+__repr__ goal is to be unambiguous representation of an object
+(used for debugging, logging, meant to be used by developers)
+__str__ goal is to be readable, meant to be displayed to enduser
+"""
+
+print(repr(bb_1))
+print(bb_1)
+
+del bb_1.fullname
+print(bb_1)
